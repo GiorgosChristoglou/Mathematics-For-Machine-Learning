@@ -57,6 +57,20 @@ def plot_by_order_pol(order, N, X, Y, lbl):
   points_y = [np.dot(phi_pol(order, x).transpose(), theta) for x in points_x]
   plt.plot(points_x, points_y, label=lbl)
 
+def trig_param(order, X, Y, N):
+  phi = generate_design_trig(order, X, N)
+  theta = optimal_theta_vector(order, Y)
+  return phi, theta
+
+def dot_prod(x):
+  np.dot(x.transpose(), x)
+
+def rmse(y, phi, theta, N):
+  return np.sqrt(dot_prod(y - np.dot(phi, theta)) / N
+
+##############################################################
+# Graph generation
+
 def generate_plot_q1_i():
   N, X_training, Y_training = training_data()
 
@@ -83,4 +97,22 @@ def generate_plot_q1_ii():
   plt.gca().set_ylim([-2,2])
   plt.show()
   return
+
+def generate_plot_q1_iii():
+  N, X, Y = training_data()
+
+  # Leave-one-out cross validation.
+  order_x = [0..10]
+  test_y = []
+
+  for i in order_x:
+    rmse_c = 0.0
+    for j in range(N):
+      phi, theta = trig_param(order, X, Y, N)
+      rmse_c += rmse(y[
+
+    test_y.append(rmse_c)
+
+
+
 
