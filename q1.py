@@ -59,14 +59,14 @@ def plot_by_order_pol(order, N, X, Y, lbl):
 
 def trig_param(order, X, Y, N):
   phi = generate_design_trig(order, X, N)
-  theta = optimal_theta_vector(order, Y)
+  theta = optimal_theta_vector(phi, Y)
   return phi, theta
 
 def dot_prod(x):
-  np.dot(x.transpose(), x)
+  return np.dot(x.transpose(), x)
 
-def rmse(y, phi, theta, N):
-  return np.sqrt(dot_prod(y - np.dot(phi, theta)) / N
+def mse(y, phi, theta, N):
+  return dot_prod(y - np.dot(phi, theta)).reshape(1,)
 
 ##############################################################
 # Graph generation
@@ -102,17 +102,27 @@ def generate_plot_q1_iii():
   N, X, Y = training_data()
 
   # Leave-one-out cross validation.
-  order_x = [0..10]
+  order_x = range(0, 11)
   test_y = []
+  training_y = []
 
   for i in order_x:
     rmse_c = 0.0
     for j in range(N):
-      phi, theta = trig_param(order, X, Y, N)
-      rmse_c += rmse(y[
+      X_cp = np.array(X[:j].tolist() + X[j+1:].tolist())
+      Y_cp = np.array(Y[:j].tolist() + Y[j+1:].tolist())
+      phi, theta = trig_param(i, X_cp, Y_cp, N - 1)
+      rmse_c += (Y[j] - np.dot(phi_trig(i, X[j]).transpose(), theta)) ** 2;
 
-    test_y.append(rmse_c)
+    test_y.append(rmse_c / float(N))
 
+  plt.plot(order_x, test_y, label="test error")
 
+  for i in order_x:
+    phi, theta = trig_param(i, X, Y, N)
+    training_y.append(mse(Y, phi, theta, N) / float(N))
 
-
+  plt.plot(order_x, training_y, label="training error")
+  plt.legend()
+  plt.show()
+  return 
